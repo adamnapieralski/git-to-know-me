@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: github
-  name: github
+    io.kompose.service: stats
+  name: stats
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: github
+      io.kompose.service: stats
   strategy:
     type: Recreate
   template:
@@ -22,27 +22,34 @@ spec:
         kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null
       labels:
-        io.kompose.service: github
+        io.kompose.service: stats
     spec:
       containers:
         - args:
             - python3
             - ./main_microservices.py
             - -s
-            - github_fetch_app
+            - stats_app
             - --port
-            - "8002"
-          image: karolniem/github_fetcher
-          name: github
+            - "8004"
+          env:
+            - name: POSTGRES_DB
+              value: authDB
+            - name: POSTGRES_PASSWORD
+              value: passwd123
+            - name: POSTGRES_USER
+              value: userDB
+          image: karolniem/stats
+          name: stats
           ports:
-            - containerPort: 8002
+            - containerPort: 8004
           resources: {}
           volumeMounts:
             - mountPath: /gtkm
-              name: github-claim0
+              name: stats-claim0
       restartPolicy: Always
       volumes:
-        - name: github-claim0
+        - name: stats-claim0
           persistentVolumeClaim:
-            claimName: github-claim0
+            claimName: stats-claim0
 status: {}

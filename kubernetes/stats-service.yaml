@@ -6,14 +6,17 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: nginx
-  name: nginx
+    io.kompose.service: stats
+  name: stats
 spec:
   ports:
-    - name: "8000"
-      port: 8000
-      targetPort: 8000
+    - name: "8004"
+      port: 8004
+      targetPort: 8004
+    - name: 8004-tcp
+      port: 8004
+      targetPort: 8004
   selector:
-    io.kompose.service: nginx
+    io.kompose.service: stats
 status:
   loadBalancer: {}

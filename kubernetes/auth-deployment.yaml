@@ -13,7 +13,8 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: auth
-  strategy: {}
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
@@ -24,10 +25,31 @@ spec:
         io.kompose.service: auth
     spec:
       containers:
-        - image: karolniem/auth:latest
+        - args:
+            - python3
+            - ./main_microservices.py
+            - -s
+            - auth_app
+            - --port
+            - "8001"
+          env:
+            - name: POSTGRES_DB
+              value: authDB
+            - name: POSTGRES_PASSWORD
+              value: passwd123
+            - name: POSTGRES_USER
+              value: userDB
+          image: karolniem/auth
           name: auth
           ports:
             - containerPort: 8001
           resources: {}
+          volumeMounts:
+            - mountPath: /gtkm
+              name: auth-claim0
       restartPolicy: Always
+      volumes:
+        - name: auth-claim0
+          persistentVolumeClaim:
+            claimName: auth-claim0
 status: {}

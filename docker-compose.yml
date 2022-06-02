@@ -10,46 +10,69 @@ services:
   #     - POSTGRES_DB=authDB
   #     - POSTGRES_USER=userDB
   #     - POSTGRES_PASSWORD=passwd123
-  nginx:
-    image: nginx
-    build: .
-    container_name: webserver
-    restart: always
-    environment:
-      - NGINX_HOST=foobar.com
+  # nginx:
+  #   image: nginx
+  #   build: .
+  #   container_name: webserver
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #   volumes:
+  #     - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+  #   environment:
+  #     - NGINX_HOST=foobar.com
   auth:
-   image: nginx
+   #image: nginx
+   build: .
    restart: always
+   volumes:
+     - ./:/gtkm
+   #expose: ["8001"]
+   command:
+     - python3 
+     - ./main_microservices.py 
+     - -s
+     - auth_app
+     - --port
+     - '8001' 
    ports:
      - "8001:8001"
   #  environment:
   #     - POSTGRES_DB=authDB
   #     - POSTGRES_USER=userDB
   #     - POSTGRES_PASSWORD=passwd123
-  github:
-   image: nginx
+  stats:
+   #image: nginx
+   build: .
    restart: always
-   ports:
-     - "8002:8002"
-  #  environment:
-  #     - POSTGRES_DB=authDB
-  #     - POSTGRES_USER=userDB
-  #     - POSTGRES_PASSWORD=passwd123
-  aggr:
-   image: nginx
-   restart: always
+   volumes:
+     - ./:/gtkm
+   #expose: ["8004"]
+   command:
+     - python3 
+     - ./main_microservices.py 
+     - -s
+     - stats_app
+     - --port
+     - '8004' 
    ports:
      - "8004:8004"
   #  environment:
   #     - POSTGRES_DB=authDB
   #     - POSTGRES_USER=userDB
   #     - POSTGRES_PASSWORD=passwd123
-  web:
+  github:
+   #image: nginx
    build: .
    restart: always
+   volumes:
+     - ./:/gtkm
+   command:
+     - python3 
+     - ./main_microservices.py 
+     - -s
+     - github_fetch_app
+     - --port
+     - '8002' 
    ports:
-     - "8000:8000"
-  #  environment:
-  #     - POSTGRES_DB=authDB
-  #     - POSTGRES_USER=userDB
-  #     - POSTGRES_PASSWORD=passwd123
+     - "8002:8002"
